@@ -105,7 +105,9 @@ app.post('/signin', async(req, res) => {
         return res.send("email not found");
     }
 
-    if (user.password !== password) {
+    const validPassword = await usersRepo.comparePassword(user.password, password);
+
+    if (!validPassword) {
         return res.send("invalid password");
     }
 

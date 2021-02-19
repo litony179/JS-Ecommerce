@@ -48,9 +48,9 @@ class usersRepository {
         const result = saved.split('.');
         const hashed = result[0];
         const salt = result[1];
-        const hashedSupplied = await scrypt(supplied, salt, 64);
+        const hashedSuppliedBuf = await scrypt(supplied, salt, 64);
 
-        return hashed === hashedSupplied;
+        return hashed === hashedSuppliedBuf.toString('hex');
 
     }
 
