@@ -76,46 +76,22 @@ router.get('/signout', (req, res) => {
 });
 
 router.get('/signin', (req, res) => {
-    res.send(signInTemplate({ req }));
+    res.send(signInTemplate({}));
 });
 
 router.post('/signin', [
-    expressValidator.check('email')
-    .trim()
-    .normalizeEmail()
-    .isEmail()
-    .withMessage('Must provide a valid email')
-    .custom(async(email) => {
-        const user = await usersRepo.getOneBy({ email });
-        if (!user) {
-            throw new Error('email not found!');
-        }
-    }),
-
-    expressValidator.check('password')
-    .trim()
-
-
-
-
+    validators.requireEmailExists,
+    validators.requireValidPasswordForUser
 ], async(req, res) => {
     const errors = expressValidator.validationResult(req);
-    console.log(errors);
-    const { email, password } = req.body;
+
+    if (!errors.isEmpty()) {
+        return res.send(signInTemplate({ errors }))
+    }
+
+    const { email } = req.body;
     const user = await usersRepo.getOneBy({ email });
 
-    if (!user) {
-        return res.send('Email not found');
-    }
-
-    const validPassword = await usersRepo.comparePassword(
-        user.password,
-        password
-    );
-
-    if (!validPassword) {
-        return res.send('Invalid password');
-    }
 
     req.session.userID = user.id;
     res.send('you are signed in');
