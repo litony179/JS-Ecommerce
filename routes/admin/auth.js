@@ -44,12 +44,12 @@ router.post('/signup', [
     validators.requirePasswordConfirmation
 ], async(req, res) => {
     const errors = expressValidator.validationResult(req);
+    console.log(errors);
 
     if (!errors.isEmpty()) {
         return res.send(signUpTemplate({ req, errors }));
     }
 
-    console.log(errors);
     const { email, password, passwordConfirmation } = req.body;
 
     //create a user inside the users repo
@@ -79,19 +79,42 @@ router.get('/signin', (req, res) => {
     res.send(signInTemplate({ req }));
 });
 
-router.post('/signin', async(req, res) => {
-    const { email, password } = req.body;
+router.post('/signin', [
+    expressValidator.check('email')
+    .trim()
+    .normalizeEmail()
+    .isEmail()
+    .withMessage('Must provide a valid email')
+    .custom(async(email) => {
+        const user = await usersRepo.getOneBy({ email });
+        if (!user) {
+            throw new Error('email not found!');
+        }
+    }),
+
+    expressValidator.check('password')
+    .trim()
+    .custom(async(password, { req }) => {
+        const user = await usersRepo.getOneBy({ email: req.body.email });
+
+        if (!user) {
+            throw new Error('invalid password');
+        }
+
+        const validPassword = await usersRepo.comparePassword(user.password, password);
+
+        if (!validPassword) {
+            throw new Error('Invalid Password!');
+        }
+    })
+
+
+
+], async(req, res) => {
+    const errors = expressValidator.validationResult(req);
+    console.log(errors);
+    const { email } = req.body;
     const user = await usersRepo.getOneBy({ email });
-
-    if (!user) {
-        return res.send("email not found");
-    }
-
-    const validPassword = await usersRepo.comparePassword(user.password, password);
-
-    if (!validPassword) {
-        return res.send("invalid password");
-    }
 
     req.session.userID = user.id;
     res.send('you are signed in');
