@@ -5,6 +5,7 @@ const cookieSession = require('cookie-session');
 const authRouter = require('./routes/admin/auth');
 
 const app = express();
+app.use(express.static('public'));
 app.use(processRequest.urlencoded({ extended: true }));
 
 app.use(cookieSession({
