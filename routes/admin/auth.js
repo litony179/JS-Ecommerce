@@ -94,27 +94,28 @@ router.post('/signin', [
 
     expressValidator.check('password')
     .trim()
-    .custom(async(password, { req }) => {
-        const user = await usersRepo.getOneBy({ email: req.body.email });
 
-        if (!user) {
-            throw new Error('invalid password');
-        }
-
-        const validPassword = await usersRepo.comparePassword(user.password, password);
-
-        if (!validPassword) {
-            throw new Error('Invalid Password!');
-        }
-    })
 
 
 
 ], async(req, res) => {
     const errors = expressValidator.validationResult(req);
     console.log(errors);
-    const { email } = req.body;
+    const { email, password } = req.body;
     const user = await usersRepo.getOneBy({ email });
+
+    if (!user) {
+        return res.send('Email not found');
+    }
+
+    const validPassword = await usersRepo.comparePassword(
+        user.password,
+        password
+    );
+
+    if (!validPassword) {
+        return res.send('Invalid password');
+    }
 
     req.session.userID = user.id;
     res.send('you are signed in');
