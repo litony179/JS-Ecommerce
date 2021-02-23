@@ -2,13 +2,33 @@ const expressValidator = require('express-validator');
 const usersRepo = require('../../repositories/users');
 
 module.exports = {
-    requireEmail: expressValidator.check('email').trim().normalizeEmail().isEmail().withMessage('Must be a valid email').custom(async(email) => {
-        const existingUser = await usersRepo.getOneBy({ email });
-        if (existingUser) {
-            throw new Error('Email already in use')
-        }
-    }),
-    requirePassword: expressValidator.check('password').trim().isLength({ min: 4, max: 20 }).withMessage('Must be between 4 to 20 characters'),
+    requireTitle: expressValidator.check('title')
+        .trim()
+        .isLength({ min: 5, max: 40 })
+        .withMessage('Must be between 5 and 40 characters'),
+
+    requirePrice: expressValidator.check('price')
+        .trim()
+        .toFloat()
+        .isFloat({ min: 1 })
+        .withMessage('must be greater than $1'),
+
+    requireEmail: expressValidator.check('email')
+        .trim()
+        .normalizeEmail()
+        .isEmail()
+        .withMessage('Must be a valid email')
+        .custom(async(email) => {
+            const existingUser = await usersRepo.getOneBy({ email });
+            if (existingUser) {
+                throw new Error('Email already in use')
+            }
+        }),
+
+    requirePassword: expressValidator.check('password')
+        .trim()
+        .isLength({ min: 4, max: 20 })
+        .withMessage('Must be between 4 to 20 characters'),
 
     requirePasswordConfirmation: expressValidator.check('passwordConfirmation')
         .trim()
@@ -21,6 +41,7 @@ module.exports = {
                 return true;
             }
         }),
+
     requireEmailExists: expressValidator.check('email')
         .trim()
         .normalizeEmail()
@@ -32,6 +53,7 @@ module.exports = {
                 throw new Error('email not found!');
             }
         }),
+
     requireValidPasswordForUser: expressValidator.check('password')
         .trim()
         .custom(async(password, { req }) => {
