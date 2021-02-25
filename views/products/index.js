@@ -7,18 +7,19 @@ module.exports = ({ products }) => {
             <div class="column is-one-quarter">
             <div class="card product-card">
                 <figure>
-                <img src="data:image/png;base64, ${product.image}"/>
+                    <img src="data:image/png;base64, ${product.image}"/>
                 </figure>
                 <div class="card-content">
-                <h3 class="subtitle">${product.title}</h3>
-                <h5>$${product.price}</h5>
+                    <h3 class="subtitle">${product.title}</h3>
+                    <h5>$${product.price}</h5>
                 </div>
                 <footer class="card-footer">
-                <form action="/cart/products" method="POST">
-                    <button class="button has-icon is-inverted">
-                    <i class="fa fa-shopping-cart"></i> Add to cart
-                    </button>
-                </form>
+                    <form action="/cart/products" method="POST">
+                        <input hidden value="${product.id}" name="productID">
+                        <button class="button has-icon is-inverted">
+                            <i class="fa fa-shopping-cart"></i> Add to cart
+                        </button>
+                    </form>
                 </footer>
             </div>
             </div>
@@ -30,9 +31,9 @@ module.exports = ({ products }) => {
         content: `
         <section class="banner">
             <div class="container">
-            <div class="columns is-centered">
-                <img src="/images/banner.jpg" />
-            </div>
+                <div class="columns is-centered">
+                    <img src="/images/banner.jpg" />
+                </div>
             </div>
         </section>
         
@@ -44,7 +45,7 @@ module.exports = ({ products }) => {
                 <div>
                     <h2 class="title text-center">Featured Items</h2>
                     <div class="columns products">
-                    ${renderedProducts}  
+                        ${renderedProducts}  
                     </div>
                 </div>
                 </div>
