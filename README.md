@@ -6,6 +6,7 @@ In this project, it is a mockup e-commerce web application, where a fully authen
 # Technology used
 * HTML
 * CSS
+* JavaScript
 * Node.js
 * express.js
 
