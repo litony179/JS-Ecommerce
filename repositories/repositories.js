@@ -59,7 +59,7 @@ module.exports = class Repositories {
         }
 
         Object.assign(records, attributes);
-        await this.writeAll(records);
+        await this.writeAll(getRecords);
     }
 
     async getOneBy(filters) {

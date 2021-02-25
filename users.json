@@ -96,5 +96,15 @@
     "email": "test21@test.com",
     "password": "ab467d0b6d9ea6b61fd3cc93e436ce716c035eca65b388bf013c6b9428ea25f815e561ef17808339739d2085db2f3f803f2087c7d0608cf173d19df8c8931e28.f5ab03958785e35d",
     "id": "4a118d0a"
+  },
+  {
+    "email": "test90@test.com",
+    "password": "cca2b56781a2af77ace8c7d064975041fbedab93212a9612061d28759413dded8c2fcaa1343747f94f016ac2484fac48477dfb4621ab86b70423f3c5b89ea051.c6803cad1e3afdf1",
+    "id": "820ead3d"
+  },
+  {
+    "email": "liyefan5@gmail.com",
+    "password": "4e7bcdbef7f1260c1d90b6a8cbb6d24e4bc6f3feb2348e0bbb024814e91e8b7a5b81d0d7d45e52b876c3b9e262d9e782bae45923b2e3562c3d6d5c01ca47967e.b49e9a9f21f48b2f",
+    "id": "5d20f307"
   }
 ]
