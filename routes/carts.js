@@ -1,5 +1,7 @@
 const express = require('express');
 const cartsRepo = require('../repositories/carts');
+const productsRepo = require('../repositories/products');
+const cartShowTemplate = require('../views/carts/show')
 
 const router = express.Router();
 
@@ -31,11 +33,32 @@ router.post('/cart/products', async(req, res) => {
     })
 
     //Either increment a product or add a new product
-    res.send('product added to cart');
+    res.redirect('/cart');
 });
 
 // Recieve a get request to show all items in a cart
+router.get('/cart', async(req, res) => {
+    if (!req.session.cartId) {
+        return res.redirect('/');
+    }
+
+    const cart = await cartsRepo.getOne(req.session.cartId);
+    for (let item of cart.items) {
+        const product = await productsRepo.getOne(item.id);
+        item.product = product;
+    }
+    res.send(cartShowTemplate({ items: cart.items }));
+});
 
 // Recieve a post request to delete an item in a cart
+router.post('/cart/products/delete', async(req, res) => {
+    const { itemID } = req.body;
+    const cart = await cartsRepo.getOne(req.session.cartId);
+    const items = cart.items.filter((item) => item.id !== itemID);
+
+    await cartsRepo.update(req.session.cartId, { items });
+
+    res.redirect('/cart');
+});
 
 module.exports = router;
