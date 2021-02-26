@@ -9,20 +9,16 @@ const router = express.Router();
 router.post('/cart/products', async(req, res) => {
     //Figure out whether the user has a cart or not
     let cart;
-    if (!req.session.cartId) {
-        //need to create one
-        // store cartId to the req.session.cartId property
+    if (!req.session.cartsId) {
+        //create cart and store cartID
         cart = await cartsRepo.create({ items: [] });
-        req.session.cartId = cart.id;
-
+        req.session.cartsId = cart.id;
     } else {
-        //We have a cart, retrieve from repo
-        cart = await cartsRepo.getOne(req.session.cartId);
+        cart = await cartsRepo.getOne(req.session.cartsId);
     }
 
     const existingItem = cart.items.find((item) => item.id === req.body.productID);
     if (existingItem) {
-        //increment
         existingItem.quantity++;
     } else {
         cart.items.push({ id: req.body.productID, quantity: 1 });
@@ -32,7 +28,6 @@ router.post('/cart/products', async(req, res) => {
         items: cart.items
     })
 
-    //Either increment a product or add a new product
     res.redirect('/cart');
 });
 
@@ -42,7 +37,7 @@ router.get('/cart', async(req, res) => {
         return res.redirect('/');
     }
 
-    const cart = await cartsRepo.getOne(req.session.cartId);
+    const cart = await cartsRepo.getOne(req.session.cartsId);
     for (let item of cart.items) {
         const product = await productsRepo.getOne(item.id);
         item.product = product;
@@ -53,10 +48,10 @@ router.get('/cart', async(req, res) => {
 // Recieve a post request to delete an item in a cart
 router.post('/cart/products/delete', async(req, res) => {
     const { itemID } = req.body;
-    const cart = await cartsRepo.getOne(req.session.cartId);
+    const cart = await cartsRepo.getOne(req.session.cartsId);
     const items = cart.items.filter((item) => item.id !== itemID);
 
-    await cartsRepo.update(req.session.cartId, { items });
+    await cartsRepo.update(req.session.cartsId, { items });
 
     res.redirect('/cart');
 });
